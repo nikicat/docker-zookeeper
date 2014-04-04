@@ -23,10 +23,12 @@ ZOOKEEPER_NODE_LIST = get_node_list(get_service_name(),
                                     ports=['peer', 'leader_election'])
 
 # Build a representation of ourselves, to match against the node list.
-myself = '{}:{}:{}'.format(
-        get_specific_host(get_service_name(), get_container_name()),
+myselfports = '{}:{}'.format(
         get_specific_port(get_service_name(), get_container_name(), 'peer'),
         get_specific_port(get_service_name(), get_container_name(), 'leader_election'))
+
+myself = '{}:{}'.format(
+        get_specific_host(get_service_name(), get_container_name()), myselfports)
 
 # Build the ZooKeeper node configuration.
 conf = {
@@ -40,10 +42,12 @@ conf = {
 
 # Add the ZooKeeper node list with peer and leader election ports.
 for id, node in enumerate(ZOOKEEPER_NODE_LIST, 1):
-    conf['server.{}'.format(id)] = node
     # Make a note of our node ID if we find ourselves in the list.
     if node == myself:
         ZOOKEEPER_NODE_ID = id
+        # workaround for https://issues.apache.org/jira/browse/ZOOKEEPER-1711
+        node = '0.0.0.0:{}'.format(myselfports)
+    conf['server.{}'.format(id)] = node
 
 # Write out the ZooKeeper configuration file.
 with open(os.path.join('conf', 'zoo.cfg'), 'w+') as f:
