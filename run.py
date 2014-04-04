@@ -7,9 +7,9 @@
 # use of some "internal" Maestro guest helper functions here.
 
 import os
+import subprocess
 
 from maestro.guestutils import *
-from maestro.extensions.logging.logstash import run_service
 
 os.chdir(os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -35,6 +35,7 @@ conf = {
     'syncLimit': 5,
     'dataDir': ZOOKEEPER_DATA_DIR,
     'clientPort': get_port('client', 2181),
+    'autopurge.purgeInterval': os.getenv('ZOOKEEPER_PURGE_INTERVAL', 1),
 }
 
 # Add the ZooKeeper node list with peer and leader election ports.
@@ -75,6 +76,4 @@ os.environ['JVMFLAGS'] = ' '.join([
 ])
 
 # Start ZooKeeper
-run_service(['bin/zkServer.sh', 'start-foreground'],
-        logbase='/var/log/zookeeper',
-        logtarget='logstash')
+subprocess.call(['bin/zkServer.sh', 'start-foreground'])
