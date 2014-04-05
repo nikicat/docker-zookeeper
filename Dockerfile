@@ -1,11 +1,12 @@
 # Dockerfile for ZooKeeper
 
-FROM quay.io/signalfuse/maestro-base:0.1.6
-MAINTAINER Maxime Petazzoni <max@signalfuse.com>
+FROM yandex/ubuntu
+MAINTAINER Nikolay Bryskin <devel.niks@gmail.com>
 
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install openjdk-7-jre-headless -y && apt-get clean
 # Get latest stable release of ZooKeeper
-RUN wget -q -O - http://mirrors.sonic.net/apache/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz \
-  | tar -C /opt -xz
+RUN wget -q -O - http://mirrors.sonic.net/apache/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz | tar -C /opt -xz
+RUN curl https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py | python && rm *.zip && python -m easy_install -H *.python.org git+git://github.com/signalfuse/maestro-ng
 
 ADD jmxagent.jar /opt/zookeeper-3.4.6/lib/
 ADD run.py /opt/zookeeper-3.4.6/.docker/
