@@ -8,8 +8,11 @@
 
 import os
 import subprocess
+import logging
 
 from maestro.guestutils import *
+
+logging.basicConfig(level=logging.INFO)
 
 os.chdir(os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -61,13 +64,13 @@ if ZOOKEEPER_NODE_ID:
         os.makedirs(ZOOKEEPER_DATA_DIR, mode=0750)
     with open(os.path.join(ZOOKEEPER_DATA_DIR, 'myid'), 'w+') as f:
         f.write('%s\n' % ZOOKEEPER_NODE_ID)
-    print 'Starting {}, node {} of a {}-node ZooKeeper cluster...'.format(
+    logging.info('Starting {}, node {} of a {}-node ZooKeeper cluster...'.format(
             get_container_name(),
             ZOOKEEPER_NODE_ID,
-            len(ZOOKEEPER_NODE_LIST))
+            len(ZOOKEEPER_NODE_LIST)))
 else:
-    print 'Starting {} as a single-node ZooKeeper cluster...'.format(
-            get_container_name())
+    logging.info('Starting {} as a single-node ZooKeeper cluster...'.format(
+            get_container_name()))
 
 os.environ['JVMFLAGS'] = ' '.join([
     '-server',
