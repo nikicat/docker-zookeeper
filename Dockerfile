@@ -1,6 +1,6 @@
 # Dockerfile for ZooKeeper
 
-FROM yandex/ubuntu:14.04
+FROM yandex/trusty
 MAINTAINER Nikolay Bryskin <devel.niks@gmail.com>
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -qyy install openjdk-7-jre-headless -y && apt-get clean
